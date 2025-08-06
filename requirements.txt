@@ -1,0 +1,7 @@
+uproot
+awkward
+numpy
+pandas
+matplotlib
+seaborn
+xgboost

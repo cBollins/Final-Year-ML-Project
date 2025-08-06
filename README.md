@@ -6,9 +6,21 @@ For the extra brave, the Jupyter environment has been collected from the Noteabl
 
 ## Motivation
 
-The universe is matter-dominated. That is, around 70% of the mass-energy in the cosmos is in the mass of both baryonic and non-baryonic (dark) matter. Antimatter is similar to matter; while the mass of an antimatter particle is the same as its matter counterpart, properties like electric charge and spin are inverse. If matter and antimatter particles intersect, a process called annihilation occurs, converting all mass into energy with 100% efficiency.
+The universe is matter-dominated. That is, around 70% of the mass-energy density in the cosmos is both baryonic and non-baryonic (dark) **matter**. Antimatter is similar to matter; while the mass of an antimatter particle is the same as its matter counterpart, properties like electric charge and spin are inverse. If matter and antimatter particles collide, a process called annihilation occurs, converting all mass into energy with 100% efficiency.
 
-The early universe was significantly hot, enabling a process called baryogenesis. Heat energy was dense enough to spontaneously create matter-antimatter quark pairs, which typically annihilated back into energy. This symmetry was seemingly broken, only enough to produce 1 matter quark for every $~10^9$ annihilated pairs. These leftover quarks ultimately construct each nucleon in the universe today. Detecting **CP violation** (charge-parity) in the neutrino sector could lead discussions on why the symmetry was disrupted during baryogenesis. **Neutrino oscillations** is the phenomenon that observes a non-zero probability that a neutrino will change its flavour over its travel from source to target. Detecting different oscillation rate between $\nu$ and $\bar{\nu}$ is where this project takes the reigns, and aids the classification of interactions in order to see the disappearance/reappearance.
+The early universe was significantly hot, enabling a process called baryogenesis. Heat energy was dense enough to spontaneously create matter-antimatter quark pairs, which typically annihilated back into energy. This symmetry was seemingly broken, only enough to produce 1 matter quark for every $~10^9$ annihilated pairs. These leftover quarks ultimately construct each nucleon in the universe today. Detecting **CP violation** (charge-parity) in the neutrino sector could lead discussions on why the symmetry was disrupted during baryogenesis. 
+
+### Neutrino Oscillations
+
+The physical phenomenon that observes a non-zero probability that a neutrino will **change** its flavour over its travel from source to target. Flavour of course being the associated lepton, we have $\nu_e, \nu_\mu, \nu_\tau$, and corresponding antimatter neutrinos of the same flavours. Detecting different oscillation rate between $\nu$ and $\bar{\nu}$ is where this project takes the reigns, and aids the classification of interactions in order to see the disappearance/reappearance.
+
+$$
+P(\nu_\alpha \longrightarrow \nu_\beta) = \sin^2(2\theta)\sin^2 \left( 1.27 \Delta m^2 \frac{L\text{ (km)}}{E \text{(GeV)}} \right)
+$$
+
+This project assumes the 'two flavour approximation' where only oscillations between $\nu_e \longrightleftarrow \nu_\mu$ are considered, for two distinct reasons:
+1. While $\nu_\mu \longrightarrow \nu_\tau$ is the more common oscillation, the beam is not likely to create a tau neutrino energetic enough to create a daughter tau lepton in the far detector, it will likely create an event similar to a neutral current, which would introduce a confusion topology with an existing class.
+2. Even if we do get a characteristic tau lepton, it will be far too similar to a muon.
 
 In summary, the matter in this universe is here due to a mechanism causing CP violation during baryogenesis. We think that observing significant differences between $\nu$ oscillations compared to $\bar{\nu}$ oscillations is one of the ways to open up ideas about this mechanism.
 
@@ -20,11 +32,11 @@ The pasticles within an event leaves behind a trace of ionisation electrons, whi
 
 ### Beam Production
 
-The neutrino beam at is created at Fermilab, Illinois, and will be fired 1300km through the Earth's crust in the direction of these LArTPCs in DUNE. This is done by firing protons at a target material, which released charged particles ($\pi, K$ primarily). These particles are steered by a magnetic horn into a fine beam, they decay shortyl after and release muon neutrinos $\nu_\mu$. Reversing magnetic polarity will steer the oppositely charged pions and kaons into the beam, which will decay into antineutrinos.
+The neutrino beam at is created at Fermilab, Illinois, and will be fired 1300km through the Earth's crust in the direction of these LArTPCs in DUNE. This is done by firing protons at a target material, which released charged particles ($\pi, K$ primarily). These particles are steered by a magnetic horn into a fine beam, they decay shortyl after and release muon neutrinos $\nu_\mu$. Reversing magnetic polarity will steer the oppositely charged pions and kaons into the beam, which will decay into muon antineutrinos. This is important, as the motivation is to detect differences between $\nu_\mu \longrightarrow \nu_e$ and $\bar{\nu_\mu} \longrightarrow \bar{\nu_e}$ oscillations.
 
 ### Near and Far detectors
 
-In order to observe neutrino oscillations, we need to first observe
+In order to observe neutrino oscillations, we need to first observe the **beam composition** before the neutrinos have had a chance to do so. This is why the setup is composed of two detectors, the near detector at the start of the beam, and the far detector at DUNE. Neutrino flux is much higher at the near detector, which is why no imaging data is collected there. Each image would be highly perturbed by other elementary particles from other interactions. The far detector is where we get the most clarity in the images, and where, given an ideal classifier, $\nu_e$ appearance can be observed.
 
 ## Dataset
 

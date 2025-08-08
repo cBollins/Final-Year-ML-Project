@@ -18,7 +18,7 @@ $$
 P(\nu_\alpha \longrightarrow \nu_\beta) = \sin^2(2\theta)\sin^2 \left( 1.27 \Delta m^2 \frac{L\text{ (km)}}{E \text{(GeV)}} \right)
 $$
 
-This project assumes the 'two flavour approximation' where only oscillations between $\nu_e \longleftright \nu_\mu$ are considered, for two distinct reasons:
+This project assumes the 'two flavour approximation' where only oscillations between $\nu_e \longleftrightarrow \nu_\mu$ are considered, for two distinct reasons:
 1. While $\nu_\mu \longrightarrow \nu_\tau$ is the more common oscillation, the beam is not likely to create a tau neutrino energetic enough to create a daughter tau lepton in the far detector, it will likely create an event similar to a neutral current, which would introduce a confusion topology with an existing class.
 2. Even if we do get a characteristic tau lepton, it will be far too similar to a muon.
 

@@ -115,28 +115,28 @@ Two ideas were drafted when planning the decision tree.
 
 The second one was deemed more thorough. More features were implemented, too, coined 'booster features'. These are features not necessarily studied and developed as thoroughly as the ones mentioned above.
 
-## Full list of features
+## Full list of features (15 total)
 
 Track/Shower:
-1. Correlation
-2. DBSCAN Noise
-3. RMSE
-4. Angle
-5. Line
-6. ADC Q4 Ratio
+- Correlation
+- DBSCAN Noise
+- RMSE
+- Angle
+- Line
+- ADC Q4 Ratio
 
 $e$ vs $\gamma$:
-8. Step Length
-9. Initial dE/dr
+- Step Length
+- Initial dE/dr
 
 Boosters:
-10. Hit Count
-11. ADC Sum
-12. Hull Density
-13. Curvature
-14. ADC Per Hit
-15. Max ADC Norm
-16. Scatter Momentum
+- Hit Count
+- ADC Sum
+- Hull Density
+- Curvature
+- ADC Per Hit
+- Max ADC Norm
+- Scatter Momentum
 
 # Full Pipeline
 

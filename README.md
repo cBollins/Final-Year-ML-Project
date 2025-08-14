@@ -44,7 +44,7 @@ A full picture is given on the homepage of the [DUNE website](https://www.dunesc
 
 The reverse-engineered reconstruction data are stored in `.ROOT` files. Each reconstructed particle is indexed in the dataframe, and can be grouped via a key `event number`. A typical event contains 5-12 particles.
 
-### Features + Truth values
+### Data + Truth values
 
 1. `reco_hits`, The spatial co-ordinates on the collection plane, the entire image of the interaction/event. When the ionisation electrons are absorbed by the wire planes, they create a Gaussian pulse. $w$ position is the position of the wire in the detector, and $x$ is calculated in terms of time and the mean drift velocity of the electric field. This is called 'electron drift reconstruction'.
 2. `neutrino_vtx`, Co-ordinates of where the reconstruction detects the neutrino hitting the Argon nucleus.
@@ -124,17 +124,19 @@ Track/Shower:
 4. Angle
 5. Line
 6. ADC Q4 Ratio
+
 $e$ vs $\gamma$:
-7. Step Length
-8. Initial dE/dr
+8. Step Length
+9. Initial dE/dr
+
 Boosters:
-9. Hit Count
-10. ADC Sum
-11. Hull Density
-12. Curvature
-13. ADC Per Hit
-14. Max ADC Norm
-15. Scatter Momentum
+10. Hit Count
+11. ADC Sum
+12. Hull Density
+13. Curvature
+14. ADC Per Hit
+15. Max ADC Norm
+16. Scatter Momentum
 
 # Full Pipeline
 

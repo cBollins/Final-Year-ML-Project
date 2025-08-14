@@ -97,4 +97,67 @@ The importance of classifying track and shower particles lies in the fact that w
 
 ## Track vs Shower Likelihood
 
-Engineered 6 features that show mediocre to strong separation between track and shower
+Engineered 6 features that show strong separation between track and shower, then developed a naive lieklihood estimator that classified training data within a 97\% accuracy.
+
+## Electron vs Photon Showers
+
+These topologies are a little more difficult to discern. There are two distinguishing features that separate them: The distance between the particle vertex and the first hits, and the initial eneryg deposition $\frac{dE}{dx}$.
+
+## Muon vs Non-Muon Tracks 
+
+This part was not taken to the extent as the previous two topologies, since all of the features engineered thus far will do as good a job of separating tracks as any new ones created. Instead of studying the differences between tracks, it was a more valuable use of time to refine the pipeline.
+
+## XGBoost Model
+
+Two ideas were drafted when planning the decision tree. 
+1. Separate tracks and showers into two separate pools using the likelihood. Then, use a bdt to split both of those pools further and obtain classifications of $e, \gamma, \mu, !\mu$.
+2. Instead of bootstrapping two models together, which could potentially pollute each pool, just use one XGBoostClassifier with 4 labels.
+
+The second one was deemed more thorough. More features were implemented, too, coined 'booster features'. These are features not necessarily studied and developed as thoroughly as 
+
+# Full Pipeline
+
+1. Invalid particles are removed from the files (eg. particles where `reco_hits_w < 15`).
+2. XGBoost classifies **every valid particle** in the files.
+3. Transform into the event regime from the particle regime by using the primary candidate logic.
+4. Event classifications are made by whether the candidate is one of the desired charged leptons or not, so:
+    - XGboost $\rightarrow e$, event is a CC$\nu_e$.
+    - XGboost $\rightarrow \mu$, event is a CC$\nu_\mu$.
+    - XGBoost $\rightarrow !\mu/\gamma$, event is NC$\nu_x$.
+
+## Train/Test data
+
+It is imperative to train a model on statistically similar, yet disjoint, data to the test set. The former ensures the model understands the events, and can make informed decisions. The latter accounts for overfitting. Generally, if testing accuracy is significantly low, the model has memorised training data, not extracted meaningful insight.
+
+Considering this, we will use two different files for training and testing. 
+
+- Training: `CheatedRecoFile_0_new.root`,
+- Testing: `CheatedRecoFile_1_new.root`.
+
+Each file contains $\sim$500,000 **particles** spread over $\sim$9,500 **events**.
+
+## XGBoost Performance
+
+Classifying on the particle-level was extremely performant, achieving a 92.0\% $\pm$ 0.12\%.
+
+The primary failure point is the confusion between muon and non-muon tracks. True muons were classified correctly 65\% of the time, whereas non-muon tracks flagged a false-positive rate of 34\%. Explaining this shortcoming is extremely simple. Firstly, a full study of $\mu$ vs $!\mu$ was intentionally omitted in the interest of project completion. The reason for this omittance can be explained by the second reason: $\mu$ and $\pi^0$ tracks are a known confusion topology, even with cutting-edge reconstructions and expert insight. It is not realistic to expect a substantial $\mu% recall.
+
+The final interesting false-positive flag is photon showers being classified as electron showers at 21%. While not as drastic as the previous, this is still dragging the accuracy down. The reasons are similar to above too, $e$ vs $\gamma$ showers are extremely similar. Imaging detectors, expecially LArTPCs, are new technology, and new ideas have yet to be developed on separating them.
+
+### Event-level Classification
+
+This section was heavily bottlenecked by an error in the files found near the end of the project. The truth labels were incorrect, only $\sim$87\% of the events were correctly labelled (CC$\nu_e$, CC$\nu_\mu$, NC$\nu_x$). Considering this, the event-level classifier achieved 78\% accuracy.
+
+The primary result, however, is the XGBoostClassifier and its ability to classify particles accurately that stands out the most.
+
+## Project Conclusion
+
+The track/shower likelihood model scored 93.8\% on track/shower predictions, the particle XGBoostClassifier scored 92\% across all particles. Despite the candidate lepton logic fails due to an error in the files, a respectable 78.1\% of all events in `CheatedRecoFile_1_new.root` were classified correctly.
+
+---
+
+# "Perfection is lots of little things done right" - Marco Pierre White
+
+The erroneous candidate lepton logic in the files gives the best insight into what this project provides for my understanding of data science. While the meticulously designed features individually performed admirably, and the particle-level BDT produced excellent results, the outcome is polluted by inaccurate labels.
+
+Annotating data to train a machine learning model is a challenging problem in itself, one that can determine the success or failure of a project entirely on its own.

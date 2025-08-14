@@ -101,7 +101,7 @@ Engineered 6 features that show strong separation between track and shower, then
 
 ## Electron vs Photon Showers
 
-These topologies are a little more difficult to discern. There are two distinguishing features that separate them: The distance between the particle vertex and the first hits, and the initial eneryg deposition $\frac{dE}{dx}$.
+These topologies are a little more difficult to discern. There are two distinguishing features that separate them: The distance between the particle vertex and the first hits, and the initial energy deposition $\frac{dE}{dx}$.
 
 ## Muon vs Non-Muon Tracks 
 
@@ -113,7 +113,28 @@ Two ideas were drafted when planning the decision tree.
 1. Separate tracks and showers into two separate pools using the likelihood. Then, use a bdt to split both of those pools further and obtain classifications of $e, \gamma, \mu, !\mu$.
 2. Instead of bootstrapping two models together, which could potentially pollute each pool, just use one XGBoostClassifier with 4 labels.
 
-The second one was deemed more thorough. More features were implemented, too, coined 'booster features'. These are features not necessarily studied and developed as thoroughly as 
+The second one was deemed more thorough. More features were implemented, too, coined 'booster features'. These are features not necessarily studied and developed as thoroughly as the ones mentioned above.
+
+## Full list of features
+
+Track/Shower:
+1. Correlation
+2. DBSCAN Noise
+3. RMSE
+4. Angle
+5. Line
+6. ADC Q4 Ratio
+$e$ vs $\gamma$:
+7. Step Length
+8. Initial dE/dr
+Boosters:
+9. Hit Count
+10. ADC Sum
+11. Hull Density
+12. Curvature
+13. ADC Per Hit
+14. Max ADC Norm
+15. Scatter Momentum
 
 # Full Pipeline
 
@@ -121,9 +142,9 @@ The second one was deemed more thorough. More features were implemented, too, co
 2. XGBoost classifies **every valid particle** in the files.
 3. Transform into the event regime from the particle regime by using the primary candidate logic.
 4. Event classifications are made by whether the candidate is one of the desired charged leptons or not, so:
-    - XGboost $\rightarrow e$, event is a CC$\nu_e$.
-    - XGboost $\rightarrow \mu$, event is a CC$\nu_\mu$.
-    - XGBoost $\rightarrow !\mu/\gamma$, event is NC$\nu_x$.
+    - XGboost $\rightarrow e$, event is a CC $\nu_e$.
+    - XGboost $\rightarrow \mu$, event is a CC $\nu_\mu$.
+    - XGBoost $\rightarrow !\mu/\gamma$, event is NC $\nu_x$.
 
 ## Train/Test data
 
@@ -134,7 +155,7 @@ Considering this, we will use two different files for training and testing.
 - Training: `CheatedRecoFile_0_new.root`,
 - Testing: `CheatedRecoFile_1_new.root`.
 
-Each file contains $\sim$500,000 **particles** spread over $\sim$9,500 **events**.
+Each file contains $\sim$ 500,000 **particles** spread over $\sim$ 9,500 **events**.
 
 ## XGBoost Performance
 
@@ -146,7 +167,7 @@ The final interesting false-positive flag is photon showers being classified as 
 
 ### Event-level Classification
 
-This section was heavily bottlenecked by an error in the files found near the end of the project. The truth labels were incorrect, only $\sim$87\% of the events were correctly labelled (CC$\nu_e$, CC$\nu_\mu$, NC$\nu_x$). Considering this, the event-level classifier achieved 78\% accuracy.
+This section was heavily bottlenecked by an error in the files found near the end of the project. The truth labels were incorrect, only $\sim$ 87\% of the events were correctly labelled (CC $\nu_e$, CC $\nu_\mu$, NC $\nu_x$). Considering this, the event-level classifier achieved 78\% accuracy.
 
 The primary result, however, is the XGBoostClassifier and its ability to classify particles accurately that stands out the most.
 

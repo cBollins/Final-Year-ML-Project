@@ -58,12 +58,12 @@ There are two types of files given by DUNE, these are called "Cheated" and "Pand
 
 ## Choosing Cheated files
 
-While attacking the classification head on using the Pandora files seems to be the most valuable approach, this incidentally conflates two important problems:
+While attacking the classification head on using the Pandora files seems to be the most valuable approach. However, this incidentally conflates two important problems:
 
-- Classifying each event using ML approaches.
+- Classifying each event.
 - Handling false reconstructions – we avoid this by choosing Cheated files.
 
-This makes the project goals a lot clearer: to classify each **perfectly** reconstructed event using machine learning.
+This makes the project goals a lot clearer: to classify each **perfectly** reconstructed event using machine learning, since we have now assumed that each event has been reconstructed perfectly.
 
 ---
 

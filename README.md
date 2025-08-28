@@ -1,0 +1,186 @@
+# Introduction
+
+In preparation for this project tour, I must encourage the reader to **fully** familiarise themselves with this README especially since the final report `Final_Report_u2201924.pdf` was equally a comment on the physics of neutrino interactions and imaging detectors as it was the machine learning approaches deployed to classify them. While reading the full report gives a full picture, it is likely more worthwhile to instead engage with this and the `Project_Overview.ipynb` notebook provided, which will strip all particle physics theory away from the report, and provide a more accessible and comfortable picture.
+
+For the extra brave, the Jupyter environment has been collected from the Noteable cloud and placed into `/UG_Project_Raw`. The .ROOT files have been put into the .gitignore since they are either corrupt or too large. Examples of the data will be given though.
+
+## Motivation
+
+The universe is matter-dominated. That is, around 70% of the mass-energy density in the cosmos is both baryonic and non-baryonic (dark) **matter**. Antimatter is similar to matter; while the mass of an antimatter particle is the same as its matter counterpart, properties like electric charge and spin are inverse. If matter and antimatter particles collide, a process called annihilation occurs, converting all mass into energy with 100% efficiency.
+
+The early universe was significantly hot, enabling a process called baryogenesis. Heat energy was dense enough to spontaneously create matter-antimatter quark pairs, which typically annihilated back into energy. This symmetry was seemingly broken, only enough to produce 1 matter quark for every $~10^9$ annihilated pairs. These leftover quarks ultimately construct each nucleon in the universe today. Detecting **CP violation** (charge-parity) in the neutrino sector could lead discussions on why the symmetry was disrupted during baryogenesis. 
+
+### Neutrino Oscillations
+
+The physical phenomenon that observes a non-zero probability that a neutrino will **change** its flavour over its travel from source to target. Flavour of course being the associated lepton, we have $\nu_e, \nu_\mu, \nu_\tau$, and corresponding antimatter neutrinos of the same flavours. Detecting different oscillation rate between $\nu$ and $\bar{\nu}$ is where this project takes the reigns, and aids the classification of interactions in order to see the disappearance/reappearance.
+
+$$
+P(\nu_\alpha \longrightarrow \nu_\beta) = \sin^2(2\theta)\sin^2 \left( 1.27 \Delta m^2 \frac{L\text{ (km)}}{E \text{(GeV)}} \right)
+$$
+
+This project assumes the 'two flavour approximation' where only oscillations between $\nu_e \longleftrightarrow \nu_\mu$ are considered, for two distinct reasons:
+1. While $\nu_\mu \longrightarrow \nu_\tau$ is the more common oscillation, the beam is not likely to create a tau neutrino energetic enough to create a daughter tau lepton in the far detector, it will likely create an event similar to a neutral current, which would introduce a confusion topology with an existing class.
+2. Even if we do get a characteristic tau lepton, it will be far too similar to a muon.
+
+In summary, the matter in this universe is here due to a mechanism causing CP violation during baryogenesis. We think that observing significant differences between $\nu$ oscillations compared to $\bar{\nu}$ oscillations is one of the ways to open up ideas about this mechanism.
+
+## Imaging Detector
+
+Imaging detectors are a recent innovation in the neutrino physics sector. Liquid Argon Time Projection Chambers (LArTPCs) provide the highest resolution output of any neutrino detector in history, DUNE is a large LArTPC currently under construction. Clearer images of neutrino interactions give machine learning models more information to extract features and classify the interaction.
+
+The pasticles within an event leaves behind a trace of ionisation electrons, which are pulled across to three wire planes by an electric field, conventionally named `U, V, W` planes. The entirety of the analysis is performed on the `W` plane, also known as the collection plane, giving the best signal/noise ratio. In short, the samples that features are extracted from are a top-down projection of the event onto the $xz$ plane.
+
+### Beam Production
+
+The neutrino beam at is created at Fermilab, Illinois, and will be fired 1300km through the Earth's crust in the direction of these LArTPCs in DUNE. This is done by firing protons at a target material, which released charged particles ($\pi, K$ primarily). These particles are steered by a magnetic horn into a fine beam, they decay shortyl after and release muon neutrinos $\nu_\mu$. Reversing magnetic polarity will steer the oppositely charged pions and kaons into the beam, which will decay into muon antineutrinos. This is important, as the motivation is to detect differences between $\nu_\mu \longrightarrow \nu_e$ and $\bar{\nu_\mu} \longrightarrow \bar{\nu_e}$ oscillations.
+
+### Near and Far detectors
+
+In order to observe neutrino oscillations, we need to first observe the **beam composition** before the neutrinos have had a chance to do so. This is why the setup is composed of two detectors, the near detector at the start of the beam, and the far detector at DUNE. Neutrino flux is much higher at the near detector, which is why no imaging data is collected there. Each image would be highly perturbed by other elementary particles from other interactions. The far detector is where we get the most clarity in the images, and where, given an ideal classifier, $\nu_e$ appearance can be observed.
+
+A full picture is given on the homepage of the [DUNE website](https://www.dunescience.org/).
+
+## Dataset
+
+The reverse-engineered reconstruction data are stored in `.ROOT` files. Each reconstructed particle is indexed in the dataframe, and can be grouped via a key `event number`. A typical event contains 5-12 particles.
+
+### Data + Truth values
+
+1. `reco_hits`, The spatial co-ordinates on the collection plane, the entire image of the interaction/event. When the ionisation electrons are absorbed by the wire planes, they create a Gaussian pulse. $w$ position is the position of the wire in the detector, and $x$ is calculated in terms of time and the mean drift velocity of the electric field. This is called 'electron drift reconstruction'.
+2. `neutrino_vtx`, Co-ordinates of where the reconstruction detects the neutrino hitting the Argon nucleus.
+3. `particle_vtx`, Co-ordinates where the particle decayed from its parent. The candidate particle is selected by the particle vertex closest to the neutrino vertex.
+4. `is_nue, is_numu, is_cc`, Truth records of the event classification. We are looking to classify events into: `is_nue, is_numu` or `is_nc == !is_cc`.
+5. `reco_adcs`, When the collection plane (`W` wires) collect the ionisation electrons, the pulse can be integrated and give an ADC (analogue to digital converter). This feature is proportional to the energy of the event at each hit.
+
+### Cheated and Pandora
+
+There are two types of files given by DUNE, these are called "Cheated" and "Pandora". The former is as it sounds, a perfect reconstruction of a reverse-engineered simulation of what we expect to see inside a LArTPC. The latter is a Pandora reconstruction of the reverse-engineered simulation. The Pandora reconstruction algorithm is currently the highest quality and most thorough that will be used by DUNE when construction is completed, and will give the best picture of what we will see in that event.
+
+## Choosing Cheated files
+
+While attacking the classification head on using the Pandora files seems to be the most valuable approach. However, this incidentally conflates two important problems:
+
+- Classifying each event.
+- Handling false reconstructions – we avoid this by choosing Cheated files.
+
+This makes the project goals a lot clearer: to classify each **perfectly** reconstructed event using machine learning, since we have now assumed that each event has been reconstructed perfectly.
+
+---
+
+# Workflow
+
+Understanding the workflow must include a little more physics background, first about the neutrinos that we are looking for.
+
+## Neutrinos
+
+Neutrally charged, extremely small and inert fundamental leptons that pair with their **charged** lepton. Neutrinos interact via the weak interaction and gravity. By 'pair', we mean that neutrinos have flavour. For example, solar neurinos are released during hydrogen burning through the proton-proton chain:
+
+$$
+4\text{H} \longrightarrow ^4\text{He} + 2e^+ + 2\nu_e
+$$
+
+2 positrons and electron neutrinos are released. Neutrinos have three flavours ($e, \mu, \tau$) for each charged lepton.
+
+## Understanding event topology
+
+Each interaction looks largely similar. We have a vertex and lots of daughter particles emerging from it – see `Project_Overview.ipynb` for examples. Each of these events can be split into three classes:
+
+1. CC$\nu_e$, charged current electron neutrino interaction. A characteristic primary electron can be spotted.
+2. CC$\nu_\mu$, charged current muon neutrino interaction. Similarly, we have a characteristic primary muon.
+3. NC$\nu_x$, neutral current. There is no litmus lepton to know the flavour of neutrino.
+
+## Tracks vs Showers
+
+Two important types of particle we see within these events are track-like and shower-like. Tracks are undecaying, inert lines and showers are cascading, chaotic exponentiating decays. The mechanism for an elextromagnetic shower is Bremsstrahlung radiation.
+
+The importance of classifying track and shower particles lies in the fact that we are eventually trying to classify candidate leptons. Muons leave a track-like trail in the detector, and electrons will decay through Bremsstrahlung and create a shower.
+
+## Track vs Shower Likelihood
+
+Engineered 6 features that show strong separation between track and shower, then developed a naive lieklihood estimator that classified training data within a 97\% accuracy.
+
+## Electron vs Photon Showers
+
+These topologies are a little more difficult to discern. There are two distinguishing features that separate them: The distance between the particle vertex and the first hits, and the initial energy deposition $\frac{dE}{dx}$.
+
+## Muon vs Non-Muon Tracks 
+
+This part was not taken to the extent as the previous two topologies, since all of the features engineered thus far will do as good a job of separating tracks as any new ones created. Instead of studying the differences between tracks, it was a more valuable use of time to refine the pipeline.
+
+## XGBoost Model
+
+Two ideas were drafted when planning the decision tree. 
+1. Separate tracks and showers into two separate pools using the likelihood. Then, use a bdt to split both of those pools further and obtain classifications of $e, \gamma, \mu, !\mu$.
+2. Instead of bootstrapping two models together, which could potentially pollute each pool, just use one XGBoostClassifier with 4 labels.
+
+The second one was deemed more thorough. More features were implemented, too, coined 'booster features'. These are features not necessarily studied and developed as thoroughly as the ones mentioned above.
+
+## Full list of features (15 total)
+
+Track/Shower:
+- Correlation
+- DBSCAN Noise
+- RMSE
+- Angle
+- Line
+- ADC Q4 Ratio
+
+$e$ vs $\gamma$:
+- Step Length
+- Initial dE/dr
+
+Boosters:
+- Hit Count
+- ADC Sum
+- Hull Density
+- Curvature
+- ADC Per Hit
+- Max ADC Norm
+- Scatter Momentum
+
+# Full Pipeline
+
+1. Invalid particles are removed from the files (eg. particles where `reco_hits_w < 15`).
+2. XGBoost classifies **every valid particle** in the files.
+3. Transform into the event regime from the particle regime by using the primary candidate logic.
+4. Event classifications are made by whether the candidate is one of the desired charged leptons or not, so:
+    - XGboost $\rightarrow e$, event is a CC $\nu_e$.
+    - XGboost $\rightarrow \mu$, event is a CC $\nu_\mu$.
+    - XGBoost $\rightarrow !\mu/\gamma$, event is NC $\nu_x$.
+
+## Train/Test data
+
+It is imperative to train a model on statistically similar, yet disjoint, data to the test set. The former ensures the model understands the events, and can make informed decisions. The latter accounts for overfitting. Generally, if testing accuracy is significantly low, the model has memorised training data, not extracted meaningful insight.
+
+Considering this, we will use two different files for training and testing. 
+
+- Training: `CheatedRecoFile_0_new.root`,
+- Testing: `CheatedRecoFile_1_new.root`.
+
+Each file contains $\sim$ 500,000 **particles** spread over $\sim$ 9,500 **events**.
+
+## XGBoost Performance
+
+Classifying on the particle-level was extremely performant, achieving a 92.0\% $\pm$ 0.12\%.
+
+The primary failure point is the confusion between muon and non-muon tracks. True muons were classified correctly 65\% of the time, whereas non-muon tracks flagged a false-positive rate of 34\%. Explaining this shortcoming is extremely simple. Firstly, a full study of $\mu$ vs $!\mu$ was intentionally omitted in the interest of project completion. The reason for this omittance can be explained by the second reason: $\mu$ and $\pi^0$ tracks are a known confusion topology, even with cutting-edge reconstructions and expert insight. It is not realistic to expect a substantial $\mu% recall.
+
+The final interesting false-positive flag is photon showers being classified as electron showers at 21%. While not as drastic as the previous, this is still dragging the accuracy down. The reasons are similar to above too, $e$ vs $\gamma$ showers are extremely similar. Imaging detectors, expecially LArTPCs, are new technology, and new ideas have yet to be developed on separating them.
+
+### Event-level Classification
+
+This section was heavily bottlenecked by an error in the files found near the end of the project. The truth labels were incorrect, only $\sim$ 87\% of the events were correctly labelled (CC $\nu_e$, CC $\nu_\mu$, NC $\nu_x$). Considering this, the event-level classifier achieved 78\% accuracy.
+
+The primary result, however, is the XGBoostClassifier and its ability to classify particles accurately that stands out the most.
+
+## Project Conclusion
+
+The track/shower likelihood model scored 93.8\% on track/shower predictions, the particle XGBoostClassifier scored 92\% across all particles. Despite the candidate lepton logic fails due to an error in the files, a respectable 78.1\% of all events in `CheatedRecoFile_1_new.root` were classified correctly.
+
+---
+
+# "Perfection is lots of little things done right" - Marco Pierre White
+
+The erroneous candidate lepton logic in the files gives the best insight into what this project provides for my understanding of data science. While the meticulously designed features individually performed admirably, and the particle-level BDT produced excellent results, the outcome is polluted by inaccurate labels.
+
+Annotating data to train a machine learning model is a challenging problem in itself, one that can determine the success or failure of a project entirely on its own.

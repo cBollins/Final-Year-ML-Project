@@ -7,3 +7,5 @@ seaborn
 xgboost
 scipy
 scikit-learn
+tqdm
+joblib
